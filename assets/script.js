@@ -18,7 +18,6 @@ function cargarHTML(){
         type: 'POST',
         dataType: 'html',
         contentType: 'application/x-www-form-urlencoded',
-        url: 'instrucciones.html',
         data: info,
         beforeSend: inicioEnvio,
         success: llegadaEnvio,
@@ -31,7 +30,9 @@ function inicioEnvio(){
     $("#respuesta").html('Enviando...');
 }
 function llegadaEnvio(data){
-    $("#respuesta").html(data);
+    $("#respuesta").html(`<p class="text-success">
+        Se ha cargado correctamente la página instrucciones
+    </p>`);
 }
 function manejaErrores(jqXHR,textStatus,errorThrown){
     $("#respuesta").html("<div class='alert alert-danger'>Error al enviar los datos al servidor</div>");
@@ -51,24 +52,31 @@ function cargarJSON(){
             let datos = JSON.parse(this.responseText);
             let totalPokemon = $("#id").val();
             let respuesta = $("#respuesta");
+            let tabla = `<table class="table table-dark" id="tabla">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Tipos</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                
+            </tbody></table>`;
 
             if (totalPokemon==''){
-                $(respuesta).append(
-                    `<div class='alert alert-danger'>
-                        Indica id para mostrar los datos de varios pokemon
-                    </div>`);
-            }else{
-                $("#tabla").html(`                            
-                <thead>
+                $(respuesta).html(tabla);
+                
+                for (let i=0;i<datos.length; i++) {
+                    $("#tbody").append(`
                     <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Tipos</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody">
-                    
-                </tbody>`);
+                        <td>${datos[i].id}</td>
+                        <td>${datos[i].name.english}</td>
+                        <td>${datos[i].type}</td>
+                    </tr>`);
+                }
+            }else{
+                $(respuesta).html(tabla);
                 for (let i=0;i<totalPokemon; i++){
                     $("#tbody").append(`
                         <tr>
